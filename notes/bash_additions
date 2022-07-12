@@ -1,0 +1,12 @@
+# Audienti related items
+alias bi='bundle install'
+alias be='bundle exec'
+export BUNDLE_SILENCE_ROOT_WARNING=1
+
+# Environment shortcuts
+alias envtest='source ./.devcontainer/.env.export_test'
+alias envdev='source ./.devcontainer/.env.export_development'
+alias envprod='source ./.devcontainer/.env.export_production'
+alias envrc="source ./.envrc"
+alias envheadless='export HEADLESS=false'
+alias envunheadless='unset HEADLESS'
