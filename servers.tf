@@ -1,10 +1,12 @@
+
+
 resource "hcloud_server" "dev" {
   count       = var.instances
   name        = "dev-server-test1${count.index}"
   image       = var.os_type
   server_type = var.server_type
   location    = var.location
-  ssh_keys    = [hcloud_ssh_key.default.id, hcloud_ssh_key.injectkey.id]
+  ssh_keys    = [data.hcloud_ssh_key.get_hetzner_key.id]
   labels = {
     type = "dev"
   }
@@ -41,7 +43,7 @@ resource "null_resource" "install_devtools" {
       agent       = false
       host        = hcloud_server.dev[count.index % var.instances].ipv4_address
       user        = "root"
-      private_key = tls_private_key.key.private_key_pem
+      private_key = file(var.hetzner_private_key_path)
     }
 
     content     = data.template_file.devtools[0].rendered
@@ -53,7 +55,7 @@ resource "null_resource" "install_devtools" {
       agent       = false
       host        = hcloud_server.dev[count.index % var.instances].ipv4_address
       user        = var.compute_user
-      private_key = tls_private_key.key.private_key_pem
+      private_key =file(var.hetzner_private_key_path)
     }
 
     inline = [

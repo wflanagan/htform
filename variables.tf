@@ -68,3 +68,8 @@ variable "asdf_ruby_git_repo_url" {
   default = "https://github.com/asdf-vm/asdf-ruby.git"
 }
 
+variable "hetzner_private_key_path" {
+  type = string
+  default = "/Users/rishimahajan/work/cloud/upwork/htform/hetzner_private_key.pem"
+}
+
