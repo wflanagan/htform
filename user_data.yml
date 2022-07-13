@@ -1,56 +1,78 @@
-#cloud-config
+#cloud-config - Cannot be used due to issues with asdf
+final_message: "The system is finally up, after $UPTIME seconds"
 package_update: true
 package_upgrade: true
 apt:
+  conf: |
+    Acquire {
+      Retries "60";
+    };
+    DPkg {
+      Lock {
+        Timeout "60";
+      };
+    };
   sources:
     yarn:
-      source: deb [trusted=yes] https://dl.yarnpkg.com/debian/ stable main
+      source: 'deb [trusted=yes] https://dl.yarnpkg.com/debian/ stable main'
     fullstaq:
-      source: deb [trusted=yes] https://apt.fullstaqruby.org debian-20.04 main
-packages:
-  - build-essential
-  - gnupg2
-  - curl
-  - wget
-  - ssh-client
-  - apt-transport-https
-  - ca-certificates
-  - gnupg2
-  - git
-  - fail2ban
-  - ufw
-  - nano
-  - ssh-client
-  - libpq-dev
-  - postgresql-client-13
-  - apt-transport-https
-  - ca-certificates
-  - hicolor-icon-theme
-  - libcanberra-gtk*
-  - libgl1-mesa-dri
-  - libgl1-mesa-glx
-  - libpangox-1.0-0
-  - libpulse0
-  - libv4l-0
-  - fonts-symbola
-  - protobuf-compiler
-  - libprotobuf-dev
-  - pkg-config
-  - libldap2-dev
-  - libidn11-dev
-  - yarn
-  - postgresql
-  - postgresql-contrib
+      source: 'deb [trusted=yes] https://apt.fullstaqruby.org debian-20.04 main'
+    pg:
+      source: 'deb [trusted=yes] http://apt.postgresql.org/pub/repos/apt/ debian-20.04 main'
+#packages:
+#  - build-essential
+#  - gnupg2
+#  - curl
+#  - wget
+#  - ssh-client
+#  - apt-transport-https
+#  - ca-certificates
+#  - gnupg2
+#  - git
+#  - fail2ban
+#  - ufw
+#  - nano
+#  - ssh-client
+#  - libpq-dev
+#  - postgresql-client-13
+#  - apt-transport-https
+#  - ca-certificates
+#  - hicolor-icon-theme
+#  - libcanberra-gtk*
+#  - libgl1-mesa-dri
+#  - libgl1-mesa-glx
+#  - libpangox-1.0-0
+#  - libpulse0
+#  - libv4l-0
+#  - fonts-symbola
+#  - protobuf-compiler
+#  - libprotobuf-dev
+#  - pkg-config
+#  - libldap2-dev
+#  - libidn11-dev
+#  - yarn
+#  - postgresql
+#  - postgresql-contrib
+
+write_files:
+  - path: /tmp/bootstrap.sh
+    permissions: "0777"
+    content: |
+      #!/bin/bash
+      sudo apt-get install build-essential gnupg2 curl wget ssh-client apt-transport-https ca-certificates gnupg2 git fail2ban ufw nano ssh-client libpq-dev apt-transport-https ca-certificates hicolor-icon-theme libcanberra-gtk* libgl1-mesa-dri libgl1-mesa-glx libpangox-1.0-0 libpulse0 libv4l-0 fonts-symbola protobuf-compiler libprotobuf-dev pkg-config libldap2-dev libidn11-dev yarn postgresql postgresql-contrib postgresql-client libssl-dev -y
+      git clone https://github.com/asdf-vm/asdf.git ~/.asdf
+      echo '. /root/.asdf/asdf.sh' >> ~/.bash_profile
+      echo '. /root/.asdf/completions/asdf.bash' >> ~/.bash_profile
+      . ~/.bash_profile
+      asdf update
+      asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git
+      asdf install nodejs 15.14.0
+      asdf global nodejs 15.14.0
+      asdf plugin add ruby https://github.com/asdf-vm/asdf-ruby.git
+      asdf install ruby 3.0.3
+      asdf global ruby 3.0.3
+      asdf plugin-add direnv
+    owner: root:root
+
 runcmd:
-  - git clone https://github.com/asdf-vm/asdf.git ~/.asdf
-  - asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git
-  - echo -e '\n. $HOME/.asdf/asdf.sh' >> ~/.bashrc
-  - echo -e '\n. $HOME/.asdf/completions/asdf.bash' >> ~/.bashrc
-  - source ~/.bashrc
-  - asdf install nodejs 15.14.0
-  - asdf global nodejs 15.14.0
-  - asdf plugin add ruby https://github.com/asdf-vm/asdf-ruby.git
-  - asdf install ruby 3.0.3
-  - asdf global ruby 3.0.3
-  - asdf plugin-add direnv
-  
+  - [bash, /tmp/bootstrap.sh ]

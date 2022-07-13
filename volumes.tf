@@ -9,6 +9,6 @@ resource "hcloud_volume" "web_server_volume" {
 resource "hcloud_volume_attachment" "web_vol_attachment" {
   count     = var.instances
   volume_id = hcloud_volume.web_server_volume[count.index].id
-  server_id = hcloud_server.web[count.index].id
+  server_id = hcloud_server.dev[count.index].id
   automount = true
 }

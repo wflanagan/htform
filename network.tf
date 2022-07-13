@@ -5,7 +5,7 @@ resource "hcloud_network" "hc_private" {
 
 resource "hcloud_server_network" "dev_network" {
   count     = var.instances
-  server_id = hcloud_server.web[count.index].id
+  server_id = hcloud_server.dev[count.index].id
   subnet_id = hcloud_network_subnet.hc_private_subnet.id
 }
 

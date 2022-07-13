@@ -32,3 +32,39 @@ variable "disk_size" {
 variable "ip_range" {
   default="10.0.1.0/24"
 }
+
+variable "nodejs_version" {
+  type = string
+  default = "15.14.0"
+}
+
+variable "ruby_version" {
+  type = string
+  default = "3.0.3"
+}
+
+variable "script_loc" {
+  type = string
+  default = "/tmp"
+}
+
+variable "compute_user" {
+  type = string
+  default = "root"
+}
+
+variable "asdf_git_repo_url" {
+  type= string
+  default = "https://github.com/asdf-vm/asdf.git"
+}
+
+variable "asdf_nodejs_git_repo_url" {
+  type= string
+  default = "https://github.com/asdf-vm/asdf-nodejs.git"
+}
+
+variable "asdf_ruby_git_repo_url" {
+  type= string
+  default = "https://github.com/asdf-vm/asdf-ruby.git"
+}
+
