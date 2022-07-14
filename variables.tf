@@ -72,3 +72,7 @@ variable "hetzner_private_key_path" {
   type = string
 }
 
+variable "hetzner_private_key_inject_path" {
+  type = string
+  default = "/root/.ssh/id_rsa"
+}

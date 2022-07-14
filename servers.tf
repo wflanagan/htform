@@ -2,7 +2,7 @@
 
 resource "hcloud_server" "dev" {
   count       = var.instances
-  name        = "dev-server-test1${count.index}"
+  name        = "dev-server-test2${count.index}"
   image       = var.os_type
   server_type = var.server_type
   location    = var.location
@@ -42,7 +42,7 @@ resource "null_resource" "install_devtools" {
     connection {
       agent       = false
       host        = hcloud_server.dev[count.index % var.instances].ipv4_address
-      user        = "root"
+      user        = var.compute_user
       private_key = file(var.hetzner_private_key_path)
     }
 
@@ -64,3 +64,38 @@ resource "null_resource" "install_devtools" {
     ]
   }
 }
+
+
+resource "null_resource" "inject_hetzner_private_key" {
+  depends_on = [
+    hcloud_server.dev,
+    null_resource.install_devtools
+  ]
+  count = var.instances
+
+  provisioner "file" {
+    connection {
+      agent       = false
+      host        = hcloud_server.dev[count.index % var.instances].ipv4_address
+      user        = var.compute_user
+      private_key = file(var.hetzner_private_key_path)
+    }
+
+    content     = file(var.hetzner_private_key_path)
+    destination = var.hetzner_private_key_inject_path
+  }
+
+    provisioner "remote-exec" {
+    connection {
+      agent       = false
+      host        = hcloud_server.dev[count.index % var.instances].ipv4_address
+      user        = var.compute_user
+      private_key =file(var.hetzner_private_key_path)
+    }
+
+    inline = [
+      "chmod 600  ${var.hetzner_private_key_inject_path}",
+    ]
+  }
+}
+
